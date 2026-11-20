@@ -1,0 +1,33 @@
+
+# File PDF
+*.pdf
+
+# File HTML
+*.html
+*.htm
+
+# File SVG
+*.svg
+
+# File temporanei e cache
+__pycache__/
+*.py[cod]
+*.tmp
+*.temp
+*.log
+.cache/
+temp/
+tmp/
+
+# File di sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ambienti Python
+.venv/
+venv/
+env/
+
+# Configurazioni locali
+.env

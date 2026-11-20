@@ -1,6 +1,11 @@
 <?php
 ini_set('memory_limit', '1024M');
-ini_set("max_execution_time", 0);  //NO maximum execution time of 30 seconds exceeded
+ini_set("max_execution_time", 0);
+@ini_set("output_buffering", "off");
+@ini_set("zlib.output_compression", false);
+while (ob_get_level()) { ob_end_flush(); }
+ob_implicit_flush(true);
+echo str_repeat(" ", 4096);  //NO maximum execution time of 30 seconds exceeded
 
 // Mostra la versione PHP in uso
 echo("&#128161; Versione PHP: ".phpversion()."<br><br>");
@@ -798,7 +803,18 @@ for ($page_num = $start_page; $page_num <= $end_page; $page_num++) {
         mkdir($page_dir, 0777, true);
     }
     
+    if (file_exists($page_dir . 'composite.html')) {
+        $successful_pages++;
+        echo "&#9193; Pagina $page_num gi&agrave; scaricata, salto<br>";
+        flush();
+        continue;
+    }
+
     $svg_content = fetchResource($page_url, $username, $password, $cookie);
+    for ($retry = 1; $retry <= 3 && ($svg_content === false || $svg_content === ''); $retry++) {
+        sleep(2);
+        $svg_content = fetchResource($page_url, $username, $password, $cookie);
+    }
     
     if ($svg_content === false) {
         echo "&#9888; Pagina $page_num saltata (errore generico)<br>";
@@ -818,12 +834,12 @@ for ($page_num = $start_page; $page_num <= $end_page; $page_num++) {
     file_put_contents($page_dir . 'composite.html', $composite_html);
     
     $successful_pages++;
-    echo "&#9989; Pagina $page_num completata. Risorse: " . count($resources) . "<br>";
+    echo "&#9989; Pagina $page_num completata. Risorse: " . count($resources) . "<br>"; flush();
 }
 
 // Genera l'indice completo
 if ($successful_pages > 0) {
-    generateEnhancedIndex($successful_pages, $save_dir);
+    generateEnhancedIndex($end_page, $save_dir);
     echo "<br>&#10004;&#65039; Indice generato: $save_dir/index.html<br>";
 }
 

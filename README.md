@@ -1,63 +1,317 @@
-# Sanoma_My_Place_eBook_Ripper
-Simple HTML Downloader for Sanoma My Place Platform
+# Sanoma My Place eBook Ripper – PDF Edition
 
-ITALIAN
+Questa repository deriva dal progetto originale [Sanoma_My_Place_eBook_Ripper](https://github.com/Tecnologica-Mente/Sanoma_My_Place_eBook_Ripper), sviluppato da Tecnologica-Mente, premetto che è stato creato con AI.
 
-1) Scaricare l'archivio ed estrarlo in una posizione a piacere. Rinominare la cartella con un nome (in caratteri minuscoli) breve e facile da ricordare (ad. es. "sanoma").
-2) Scaricare la versione portable di XAMPP Lite (consiglio la versione 7.3.x - dove con x intendo un qualunque numero, scegliete la versione italiana indicata con "php-man-it" - x86 o x64 a seconda del vostro Sistema Operativo) dal sito:
-https://sourceforge.net/projects/xampplite/
-Estrarre l'archivio appena scaricato nella cartella root del PC (ad es. C:\, D:\, ecc.) e spostare la cartella contenente tutti i file del precedente punto 1) nella cartella "www" (vedi immagine allegata "img_01_files_position_image.png" - tutti i file devono stare nella stessa cartella).
-3) Fare doppio clic sul file "XL-Control-Panel.x86.exe" o "XL-Control-Panel.x64.exe" (a seconda di quale avete scaricato al precedente punto 2)) e avviate il Server Apache cliccando sull'apposito pulsante "Start". Lanciare il proprio browser e nella barra degli indirizzi digitare:
-localhost/sanoma
-(oppure localhost/<nome_cartella_data_al_punto_1>).
-4) Aprire un'altra scheda ed effettuare l'accesso con le proprie credenziali al sito Sanoma My Place:
-https://place.sanoma.it/login
-Cliccare su "I tuoi prodotti" e successivamente, in corrispondenza del libro che si vuole scaricare (anche più volte, se necessario), attendere il caricamento dello stesso sul Book Viewer. Premere sulla tastiera il tasto F12 per visualizzare la DevTools.
-a) Se si sta utilizzando Google Chrome, spostarsi nella scheda "Network", assicurandosi che sia spuntata la voce "Disable cache" e selezionata la voce "Fetch/XHR". Premere F5 per aggiornare la pagina. Tra i numerosi file elencati, cercare quello che ha nome "12.data" (o con un qualunque altro numero), purchè sia di colore nero (evitate quelli rossi) e cliccare su di esso. Verranno visualizzate diverse informazioni.
-b) Se si sta utilizzando Firefox, spostarsi nella scheda "Rete" e ripetere gli stessi passi del punto a).
-c) Se si sta utilizzando Microsoft Edge, spostarsi nella scheda "Rete" e ripetere gli stessi passi del punto a).
-5) Copiare il contenuto del campo "Request URL" (vedi immagine allegata "img_02_request_url.png") e incollarlo nei campi "Base URL" e "Product path" suddividendolo esattamente come richiesto (fare attenzione a non tralasciare nulla, neanche gli slash "/" iniziali e finali).
-6) Nei 2 campi successivi inserire il proprio Username e la propria Password dell'account Sanoma MyPlace.
-7) Sempre mantenendo selezionato il file con nome "12.data" (o con un qualunque altro numero) di cui al precedente punto a), scrollare con la rotellina del mouse in basso, copiare il contenuto del campo "Cookie" (vedi immagine allegata "img_03_cookie.png") e incollarlo nel campo "Sanoma MyPlace Session Cookie". Per essere sicuri di selezionarlo tutto, basta fare doppio clic con il pulsante sinistro del mouse sul contenuto del Cookie stesso.
-8) Nei 2 campi successivi inserire la pagina inziale (ad es. 1) e finale (ad es. 125) del libro.
-9) Fare clic sul pulsante "Procedi" per iniziare il download in HTML delle pagine del libro e attendere il completamento dell'operazione (il tempo necessario dipende dal numero di pagine di cui è composto il libro). Durante l'operazione di download non è prevista nessuna indicazione del progresso dell'operazione stessa.
-10) Al termine dell'operazione di download, il programma mostrerà diverse informazioni e sarà creata nella cartella "www/sanoma" (oppure "www/<nome_cartella_data_al_punto_1>") un'altra cartella denominata "downloaded_pages" con il contenuto del libro. Per avviare la visualizzazione in locale sarà sufficiente fare doppio clic sul file "index.html".
+La variante documentata in questa repository mantiene il sistema originale di download delle pagine HTML e introduce modifiche al downloader, uno script Python per la conversione in PDF e funzionalità aggiuntive per la gestione delle pagine, della numerazione e del riconoscimento del testo.
 
-Divertitevi ;-)
+## Indice
 
-p.s. Ricorda che sei responsabile di ciò che stai facendo su Internet e anche se questo script esiste, potrebbe non essere legale nel tuo paese creare backup personali dei libri.
+- [Descrizione](#descrizione)
+- [Differenze rispetto al progetto originale](#differenze-rispetto-al-progetto-originale)
+- [Struttura dei file](#struttura-dei-file)
+- [Requisiti](#requisiti)
+- [Fase 1 – Download delle pagine HTML](#fase-1--download-delle-pagine-html)
+- [Fase 2 – Conversione in PDF](#fase-2--conversione-in-pdf)
+- [Numerazione personalizzata](#numerazione-personalizzata)
+- [OCR e testo selezionabile](#ocr-e-testo-selezionabile)
+- [Opzioni disponibili](#opzioni-disponibili)
+- [Risoluzione dei problemi](#risoluzione-dei-problemi)
+- [Note e responsabilità](#note-e-responsabilità)
+- [Crediti e licenza](#crediti-e-licenza)
 
-L'UTILIZZO DEL SOFTWARE È A PROPRIO ESCLUSIVO RISCHIO E PERICOLO. IL SOFTWARE È FORNITO DAI DETENTORI DEL COPYRIGHT E DAI COLLABORATORI "COSÌ COM'È" E NON SI RICONOSCE ALCUNA ALTRA GARANZIA ESPRESSA O IMPLICITA, INCLUSE, A TITOLO ESEMPLIFICATIVO, GARANZIE IMPLICITE DI COMMERCIABILITÀ E IDONEITÀ PER UN FINE PARTICOLARE. IN NESSUN CASO IL PROPRIETARIO DEL COPYRIGHT O I RELATIVI COLLABORATORI POTRANNO ESSERE RITENUTI RESPONSABILI PER DANNI DIRETTI, INDIRETTI, INCIDENTALI, SPECIALI, PUNITIVI, O CONSEQUENZIALI (INCLUSI, A TITOLO ESEMPLIFICATIVO, DANNI DERIVANTI DALLA NECESSITÀ DI SOSTITUIRE BENI E SERVIZI, DANNI PER MANCATO UTILIZZO, PERDITA DI DATI O MANCATO GUADAGNO, INTERRUZIONE DELL'ATTIVITÀ), IMPUTABILI A QUALUNQUE CAUSA E INDIPENDENTEMENTE DALLA TEORIA DELLA RESPONSABILITÀ, SIA NELLE CONDIZIONI PREVISTE DAL CONTRATTO CHE IN CASO DI "STRICT LIABILITY", ERRORI (INCLUSI NEGLIGENZA O ALTRO), ILLECITO O ALTRO, DERIVANTI O COMUNQUE CORRELATI ALL'UTILIZZO DEL SOFTWARE, ANCHE QUALORA SIANO STATI INFORMATI DELLA POSSIBILITÀ DEL VERIFICARSI DI TALI DANNI.
+---
 
-Licenza MIT (Massachusetts Institute of Technology)
+## Descrizione
 
-------------------------------------------------------------------------------------
-ENGLISH
+Il progetto consente di scaricare localmente le pagine di un libro disponibile sulla piattaforma Sanoma My Place e di visualizzarle successivamente senza dover utilizzare il Book Viewer online.
 
-1) Download the archive and extract it to a location of your choice. Rename the folder with a short, memorable name (in lowercase) (e.g., "sanoma").
-2) Download the portable version of XAMPP Lite (I recommend version 7.3.x - where x means any number; choose the Italian version indicated by "php-man-it" - x86 or x64 depending on your operating system) from the website:
-https://sourceforge.net/projects/xampplite/
-Extract the downloaded archive to the root folder of your PC (e.g., C:\, D:\, etc.) and move the folder containing all the files from step 1) above to the "www" folder (see attached image "img_01_files_position_image.png" - all files must be in the same folder).
-3) Double-click the "XL-Control-Panel.x86.exe" or "XL-Control-Panel.x64.exe" file (depending on which you downloaded in step 2 above) and start the Apache Server by clicking the "Start" button. Launch your browser and type:
-localhost/sanoma
-(or localhost/<folder_name_date_in_step_1>) in the address bar.
-4) Open another tab and log in to the Sanoma My Place website with your credentials:
-https://place.sanoma.it/login
-Click "Your Products" and then, next to the book you want to download (multiple times, if necessary), wait for it to load in the Book Viewer. Press F12 on your keyboard to display the DevTools.
-a) If you're using Google Chrome, go to the "Network" tab, ensuring "Disable cache" and "Fetch/XHR" are checked. Press F5 to refresh the page. Among the many files listed, find the one named "12.data" (or any other number), as long as it's black (avoid the red ones), and click on it. Various information will be displayed.
-b) If you're using Firefox, go to the "Network" tab and repeat the steps in point a).
-c) If you're using Microsoft Edge, go to the "Network" tab and repeat the steps in point a).
-5) Copy the contents of the "Request URL" field (see attached image "img_02_request_url.png") and paste it into the "Base URL" and "Product path" fields, splitting it exactly as requested (be careful not to leave anything out, not even the initial and final slashes "/").
-6) In the next two fields, enter your Sanoma MyPlace account username and password.
-7) While still keeping the file named "12.data" (or any other number) selected from point a) above, scroll down with the mouse wheel, copy the contents of the "Cookie" field (see attached image "img_03_cookie.png"), and paste it into the "Sanoma MyPlace Session Cookie" field. To ensure it's all selected, simply double-click the cookie's contents with the left mouse button.
-8) In the next two fields, enter the book's start page (e.g., 1) and end page (e.g., 125).
-9) Click the "Proceed" button to begin downloading the book's HTML pages and wait for the download to complete (the time required depends on the number of pages in the book). There is no progress indicator during the download.
-10) Once the download is complete, the program will display various information, and a folder called "downloaded_pages" will be created in the "www/sanoma" folder (or "www/<folder_name_date_at_point_1>") containing the book's contents. To view it locally, simply double-click the "index.html" file.
+Il procedimento è diviso in due fasi indipendenti:
 
-Enjoy ;-)
+1. **Download:** il programma PHP scarica le pagine del libro e le relative risorse, generando pagine HTML consultabili localmente.
+2. **Conversione:** lo script Python `crea_pdf.py` elabora le pagine HTML scaricate e genera un documento PDF.
 
-p.s. Remember that you are responsible for what you are doing on the Internet and even if this script exists, it might not be legal in your country to create personal backups of books.
+La conversione in PDF è facoltativa: è possibile continuare a utilizzare il downloader originale e consultare le pagine tramite il file `index.html`.
 
-USE OF THE SOFTWARE IS AT YOUR OWN RISK. THE SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND COLLABORATORS "AS IS" AND THERE IS NO EXPRESS OR IMPLIED WARRANTY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR. IN NO EVENT SHALL THE OWNER OF THE COPYRIGHT OR ITS COLLABORATORS BE HELD LIABLE FOR DIRECT, INDIRECT, INCIDENTAL, SPECIAL, PUNITIVE, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, DAMAGES, DAMAGES ARISING FROM THE LOSS OF DATA OR FAILURE TO EARN, INTERRUPTION OF BUSINESS), CAUSED BY ANY CAUSE AND REGARDLESS OF THE THEORY OF LIABILITY, BOTH IN THE CONDITIONS PROVIDED BY THE CONTRACT AND IN CASE OF "STRICT LIABILITY", ERRORS (INCLUDING NEGLIGENCE OR OTHERWISE), ARISING OR OTHERWISE RELATED TO YOUR USE OF THE SOFTWARE, EVEN IF YOU HAVE BEEN INFORMED OF THE POSSIBILITY OF SUCH DAMAGES.
+## Differenze rispetto al progetto originale
 
-MIT (Massachusetts Institute of Technology) licence
+Questa variante mantiene la struttura e il funzionamento generale del progetto originale, introducendo le seguenti modifiche.
+
+### Modifiche al downloader PHP
+
+Il file `download.php` è stato modificato per:
+
+- Mostrare progressivamente l'avanzamento del download nel browser.
+- Evitare di scaricare nuovamente le pagine già presenti sul disco.
+- Effettuare fino a tre tentativi aggiuntivi quando il contenuto SVG di una pagina risulta vuoto.
+- Aggiornare correttamente il numero totale di pagine nell'indice HTML generato.
+
+### Nuovo convertitore PDF
+
+È stato aggiunto `crea_pdf.py`, uno script Python autonomo che:
+
+- Converte le pagine HTML tramite Chrome o Chromium.
+- Mantiene i livelli SVG e gestisce gli elementi `clipPath`.
+- Rimuove duplicazioni tra risorse HTML e SVG attraverso il confronto SHA256, preservando le versioni SVG necessarie.
+- Conserva le pagine sorgente vuote.
+- Permette di convertire più pagine contemporaneamente.
+- Utilizza una cache temporanea per evitare di ripetere conversioni già completate.
+- Permette di escludere le copertine dalla numerazione del documento.
+- Supporta etichette PDF personalizzate e numerazioni suddivise in sezioni.
+- Offre una fase OCR facoltativa per rendere ricercabile e selezionabile il testo contenuto nelle pagine.
+
+## Struttura dei file
+
+| File | Descrizione |
+|---|---|
+| `index.php` | Interfaccia web per configurare il download |
+| `download.php` | Downloader delle pagine e delle risorse |
+| `crea_pdf.py` | Convertitore HTML-PDF |
+| `avvia.sh` | Avvio del server PHP integrato su Linux |
+| `jquery/` oppure `jquery.zip` | Libreria jQuery |
+| `imgs/` oppure `imgs.zip` | Immagini utilizzate dall'interfaccia |
+
+La cartella `downloaded_pages` viene creata durante il download e contiene le pagine del libro.
+
+## Requisiti
+
+### Per il download
+
+- PHP con estensione cURL.
+- Un browser moderno.
+- Un account Sanoma My Place con accesso al prodotto interessato.
+- I dati di connessione e la sessione necessari per effettuare le richieste autorizzate.
+
+Su Windows è possibile utilizzare XAMPP Lite, come indicato nella documentazione del progetto originale.
+
+Su Linux è disponibile `avvia.sh`, che avvia il server PHP integrato e verifica la presenza di PHP CLI e dell'estensione cURL. Su distribuzioni Debian/Ubuntu può installare automaticamente le dipendenze mancanti, richiedendo sudo.
+
+### Per la conversione PDF
+
+- Python 3.
+- Google Chrome oppure Chromium.
+- OCRmyPDF e Tesseract OCR, soltanto se si desidera utilizzare la funzione OCR.
+
+L'OCR è facoltativo: senza `--ocr` è possibile generare il PDF senza installare questi due componenti.
+
+## Fase 1 – Download delle pagine HTML
+
+La procedura di download rimane sostanzialmente quella del progetto originale.
+
+1. Scaricare o clonare la repository ed estrarla in una cartella.
+2. Avviare il server PHP.
+3. Aprire nel browser l'indirizzo locale del progetto.
+4. Accedere a Sanoma My Place e caricare il libro desiderato nel Book Viewer.
+5. Aprire gli strumenti per sviluppatori del browser con F12.
+6. Individuare nella scheda Network/Rete una richiesta relativa a una risorsa del libro.
+7. Recuperare il `Request URL` e le informazioni di sessione necessarie.
+8. Inserire nell'interfaccia i dati richiesti:
+   - Base URL;
+   - Product path;
+   - Username;
+   - Password;
+   - Session Cookie;
+   - Pagina iniziale;
+   - Pagina finale.
+9. Premere **Procedi** e attendere il completamento.
+
+Al termine sarà disponibile la cartella `downloaded_pages`, contenente le pagine HTML e le risorse scaricate.
+
+Per consultare il libro senza conversione è sufficiente aprire `downloaded_pages/index.html`.
+
+## Fase 2 – Conversione in PDF
+
+Lo script Python deve essere eseguito dalla cartella principale della repository.
+
+Il comando più semplice è:
+
+```bash
+python3 crea_pdf.py
+```
+
+Se non vengono specificate altre opzioni, lo script utilizza la cartella `downloaded_pages` e genera `libro.pdf`.
+
+Per specificare il nome del PDF:
+
+```bash
+python3 crea_pdf.py -o libro.pdf
+```
+
+Per convertire un intervallo di pagine:
+
+```bash
+python3 crea_pdf.py --da 1 --a 100 -o prova.pdf
+```
+
+Per utilizzare due processi paralleli:
+
+```bash
+python3 crea_pdf.py -j 2 -o libro.pdf
+```
+
+La conversione produce un PDF composto dalle pagine HTML selezionate, mantenendo per quanto possibile la struttura grafica originale.
+
+## Numerazione personalizzata
+
+È possibile indicare quante pagine iniziali devono essere considerate copertine.
+
+Per esempio:
+
+```bash
+python3 crea_pdf.py -o libro.pdf --copertine 17
+```
+
+In questo esempio le prime 17 pagine vengono conservate nel PDF, ma escluse dalla numerazione del contenuto.
+
+Lo script supporta anche sezioni con numerazione letterata. Durante l'esecuzione è possibile indicare:
+
+- La pagina PDF in cui inizia la sezione.
+- La lettera da utilizzare.
+- Il numero iniziale della numerazione.
+
+Esempio:
+
+```text
+Pagina PDF 18 → A210
+Pagina PDF 132 → C150
+Pagina PDF 258 → B272
+Pagina PDF 352 → D150
+```
+
+Le etichette vengono applicate attraverso i Page Labels del PDF, in modo da distinguere la numerazione editoriale da quella fisica delle pagine.
+
+## OCR e testo selezionabile
+
+La funzione OCR permette di aggiungere un livello di testo riconosciuto alle pagine del PDF.
+
+Per utilizzarla occorre installare OCRmyPDF:
+
+```bash
+python -m pip install OCRmyPDF
+```
+
+È inoltre necessario installare separatamente Tesseract OCR.
+
+Su Windows è possibile utilizzare Winget:
+
+```cmd
+winget install -e --id tesseract-ocr.tesseract
+```
+
+Dopo l'installazione bisogna verificare che entrambi i programmi siano raggiungibili dal PATH:
+
+```cmd
+ocrmypdf --version
+tesseract --version
+tesseract --list-langs
+```
+
+Per il riconoscimento in italiano deve essere disponibile la lingua `ita`.
+
+Esempio di conversione con OCR:
+
+```bash
+python3 crea_pdf.py -o libro.pdf --copertine 17 --ocr --lingua-ocr ita
+```
+
+Per il riconoscimento combinato italiano e inglese:
+
+```bash
+python3 crea_pdf.py -o libro.pdf --ocr --lingua-ocr eng+ita
+```
+
+**Nota Windows:** installare OCRmyPDF con pip non significa necessariamente che il comando `ocrmypdf` sia già presente nel PATH. La cartella `Scripts` dell'installazione Python deve essere raggiungibile da Windows. Anche la cartella di installazione di Tesseract deve essere presente nel PATH.
+
+Se OCRmyPDF o Tesseract non sono disponibili, la fase OCR non viene completata. Il PDF originale senza OCR viene conservato.
+
+## Opzioni disponibili
+
+| Opzione | Funzione |
+|---|---|
+| `--version` | Mostra versione, build e impronta SHA256 |
+| `-o`, `--output` | Specifica il PDF di uscita |
+| `-j`, `--jobs` | Numero di conversioni parallele |
+| `--browser` | Specifica il percorso o comando del browser |
+| `--da` | Prima pagina da convertire |
+| `--a` | Ultima pagina da convertire |
+| `--copertine` | Numero di copertine iniziali da escludere dalla numerazione |
+| `--ocr` | Attiva il riconoscimento OCR |
+| `--lingua-ocr` | Specifica le lingue OCR |
+| `--tieni-temp` | Conserva i file temporanei e la cache |
+
+Per visualizzare tutte le opzioni:
+
+```bash
+python3 crea_pdf.py --help
+```
+
+Per verificare la versione installata:
+
+```bash
+python3 crea_pdf.py --version
+```
+
+## Risoluzione dei problemi
+
+### Chrome o Chromium non trovato
+
+Su Windows lo script cerca automaticamente Chrome nei percorsi di installazione standard.
+
+Se necessario, è possibile indicare manualmente il percorso:
+
+```cmd
+python3 crea_pdf.py --browser "C:\Program Files\Google\Chrome\Application\chrome.exe"
+```
+
+### OCRmyPDF non trovato
+
+Verificare che il comando sia disponibile:
+
+```cmd
+where ocrmypdf
+```
+
+Se non viene trovato, controllare la cartella `Scripts` dell'installazione Python e aggiungerla al PATH.
+
+### Tesseract non trovato
+
+Verificare:
+
+```cmd
+where tesseract
+```
+
+Se necessario, aggiungere al PATH la cartella di installazione, normalmente:
+
+```text
+C:\Program Files\Tesseract-OCR
+```
+
+### Conservare i file temporanei
+
+Per mantenere i file intermedi in caso di problemi:
+
+```bash
+python3 crea_pdf.py -o libro.pdf --tieni-temp
+```
+
+La cartella `_pdf_tmp` contiene i PDF delle singole pagine e i dati della cache.
+
+## Note e responsabilità
+
+Il progetto è destinato esclusivamente a scopi di studio e ricerca tecnica.
+
+L'utente è responsabile del rispetto delle condizioni d'uso della piattaforma, dei diritti d'autore e delle leggi applicabili nel proprio Paese.
+
+Le credenziali e i cookie di sessione sono informazioni riservate: non devono essere condivisi, pubblicati o inseriti nei file della repository.
+
+Il progetto non è affiliato, approvato o supportato da Sanoma.
+
+## Crediti e licenza
+
+Il downloader originale è stato sviluppato da [Tecnologica-Mente](https://github.com/Tecnologica-Mente/Sanoma_My_Place_eBook_Ripper).
+
+Questa variante ne mantiene la struttura di base e introduce modifiche al downloader e il convertitore PDF Python.
+
+Il progetto originale è distribuito con licenza MIT. Consultare il file `LICENSE` per i termini e le condizioni di utilizzo e mantenere le attribuzioni previste dalla licenza.
+
+---
