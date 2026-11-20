@@ -316,7 +316,9 @@ Il progetto originale è distribuito con licenza MIT. Consultare il file `LICENS
 
 ---
 
-ENGLISH 
+# ENGLISH 
+
+---
 
 # Sanoma My Place eBook Ripper – PDF Edition
 
