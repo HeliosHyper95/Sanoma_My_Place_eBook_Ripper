@@ -1,4 +1,12 @@
-# Sanoma My Place eBook Ripper – PDF Edition
+# Sanoma My Place eBook Ripper
+
+## Languages 🇬🇧 🇮🇹
+- [🇬🇧 English](#ENGLISH)
+- [🇮🇹 Italian](#ITALIAN)
+
+  ---
+
+# ITALIAN
 
 Questa repository deriva dal progetto originale [Sanoma_My_Place_eBook_Ripper](https://github.com/Tecnologica-Mente/Sanoma_My_Place_eBook_Ripper), sviluppato da Tecnologica-Mente, premetto che è stata creata con AI.
 
@@ -49,7 +57,7 @@ Il file `download.php` è stato modificato per:
 
 È stato aggiunto `crea_pdf.py`, uno script Python autonomo che:
 
-- Converte le pagine HTML tramite Chrome o Chromium.
+- Converte le pagine HTML tramite browser Chromium.
 - Mantiene i livelli SVG e gestisce gli elementi `clipPath`.
 - Rimuove duplicazioni tra risorse HTML e SVG attraverso il confronto SHA256, preservando le versioni SVG necessarie.
 - Conserva le pagine sorgente vuote.
