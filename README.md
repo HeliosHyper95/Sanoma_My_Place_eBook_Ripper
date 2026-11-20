@@ -315,3 +315,349 @@ Questa variante ne mantiene la struttura di base e introduce modifiche al downlo
 Il progetto originale è distribuito con licenza MIT. Consultare il file `LICENSE` per i termini e le condizioni di utilizzo e mantenere le attribuzioni previste dalla licenza.
 
 ---
+
+ENGLISH 
+
+# Sanoma My Place eBook Ripper – PDF Edition
+
+This repository is a derivative of the original [Sanoma_My_Place_eBook_Ripper](https://github.com/Tecnologica-Mente/Sanoma_My_Place_eBook_Ripper), developed by [Tecnologica-Mente](https://github.com/Tecnologica-Mente). This version was created with AI assistance.
+
+It retains the original HTML page downloader and introduces improvements to the downloader, a Python-based PDF converter, and additional features for page handling, custom page numbering, and text recognition.
+
+## Table of contents
+
+- [Overview](#overview)
+- [Differences from the original project](#differences-from-the-original-project)
+- [Repository structure](#repository-structure)
+- [Requirements](#requirements)
+- [Step 1 – Downloading the HTML pages](#step-1--downloading-the-html-pages)
+- [Step 2 – Converting the pages to PDF](#step-2--converting-the-pages-to-pdf)
+- [Custom page numbering](#custom-page-numbering)
+- [OCR and selectable text](#ocr-and-selectable-text)
+- [Available options](#available-options)
+- [Troubleshooting](#troubleshooting)
+- [Notes and disclaimer](#notes-and-disclaimer)
+- [Credits and license](#credits-and-license)
+
+---
+
+## Overview
+
+This project allows you to download locally the pages of a book available on the Sanoma My Place platform and view them later without using the online Book Viewer.
+
+The workflow consists of two independent steps:
+
+1. **Download:** the PHP application downloads the book pages and their related resources, saving them as local HTML pages.
+2. **Conversion:** the Python script `crea_pdf.py` processes the downloaded HTML pages and creates a PDF document.
+
+PDF conversion is optional. You can still use the original downloader and browse the downloaded pages through the generated `index.html` file.
+
+## Differences from the original project
+
+This version retains the general structure and workflow of the original project, with the following additions and changes.
+
+### PHP downloader improvements
+
+The `download.php` file has been modified to:
+
+- Display download progress progressively in the browser.
+- Skip pages that have already been downloaded.
+- Retry up to three times when a page's SVG content is empty or unavailable.
+- Use the requested final page number when generating the HTML index.
+
+### New PDF converter
+
+The new `crea_pdf.py` script:
+
+- Converts HTML pages using Google Chrome or Chromium.
+- Preserves SVG layers and handles SVG `clipPath` elements.
+- Removes duplicate content between HTML and SVG resources using SHA256 comparisons, while preserving the SVG versions required for rendering.
+- Keeps blank source pages in the output.
+- Supports parallel page conversion.
+- Uses a temporary cache to avoid repeating completed conversions.
+- Allows the initial cover pages to be excluded from the document's page numbering.
+- Supports custom PDF page labels and section-based numbering.
+- Offers optional OCR to make text in the pages searchable and selectable.
+
+## Repository structure
+
+| File or directory | Description |
+|---|---|
+| `index.php` | Web interface used to configure the download |
+| `download.php` | Downloads book pages and their resources |
+| `crea_pdf.py` | Converts the downloaded HTML pages into a PDF |
+| `avvia.sh` | Starts PHP's built-in web server on Linux |
+| `jquery/` or `jquery.zip` | jQuery library |
+| `imgs/` or `imgs.zip` | Images used by the web interface |
+| `downloaded_pages/` | Created during download; stores the downloaded pages |
+
+## Requirements
+
+### For downloading
+
+- PHP with the cURL extension enabled.
+- A modern web browser.
+- A Sanoma My Place account with access to the relevant book.
+- The connection and session information required to make authorized requests.
+
+On Windows, you can use XAMPP Lite, as described in the original project's documentation.
+
+On Linux, the included `avvia.sh` script starts PHP's built-in web server and checks for PHP CLI and the cURL extension. On Debian/Ubuntu-based distributions, it can install missing dependencies automatically (sudo access is required).
+
+### For PDF conversion
+
+- Python 3.
+- Google Chrome or Chromium.
+- OCRmyPDF and Tesseract OCR, only if you want to use the OCR feature.
+
+OCR is optional. You can create PDFs without installing OCRmyPDF or Tesseract by running the converter without the `--ocr` option.
+
+## Step 1 – Downloading the HTML pages
+
+The download procedure is largely the same as in the original project.
+
+1. Clone or download this repository and extract it into a folder.
+2. Start the PHP server.
+3. Open the project's local address in your browser.
+4. Sign in to Sanoma My Place and open the desired book in the Book Viewer.
+5. Open the browser developer tools by pressing F12.
+6. In the **Network** tab, find a request related to one of the book's resources.
+7. Retrieve the required `Request URL` and session information.
+8. Enter the requested information in the web interface:
+   - Base URL;
+   - Product path;
+   - Username;
+   - Password;
+   - Session Cookie;
+   - First page;
+   - Last page.
+9. Click **Proceed** and wait for the download to finish.
+
+When the process is complete, the `downloaded_pages` folder will contain the downloaded HTML pages and their resources.
+
+To browse the downloaded book without converting it, open:
+
+```text
+downloaded_pages/index.html
+```
+
+### Starting the PHP server on Linux
+
+From the repository directory, make the script executable and run it:
+
+```bash
+chmod +x avvia.sh
+./avvia.sh
+```
+
+By default, the server uses port 8000. You can specify another port:
+
+```bash
+./avvia.sh 8080
+```
+
+Then open `http://localhost:8000/` (or the port you selected) in your browser. Press Ctrl+C in the terminal to stop the server.
+
+## Step 2 – Converting the pages to PDF
+
+Run the Python script from the repository's main directory.
+
+The simplest command is:
+
+```bash
+python3 crea_pdf.py
+```
+
+On Windows, you can use `python` instead of `python3`, depending on your Python installation:
+
+```cmd
+python crea_pdf.py
+```
+
+If no other options are specified, the script uses the `downloaded_pages` folder and creates `libro.pdf`.
+
+To specify the output filename:
+
+```bash
+python3 crea_pdf.py -o libro.pdf
+```
+
+To convert a range of pages:
+
+```bash
+python3 crea_pdf.py --da 1 --a 100 -o sample.pdf
+```
+
+To use two parallel conversion workers:
+
+```bash
+python3 crea_pdf.py -j 2 -o libro.pdf
+```
+
+The resulting PDF contains the selected HTML pages, preserving the original page layout as closely as possible.
+
+## Custom page numbering
+
+You can specify how many initial pages should be treated as covers.
+
+For example:
+
+```bash
+python3 crea_pdf.py -o libro.pdf --copertine 17
+```
+
+In this example, the first 17 pages are kept in the PDF but excluded from the content page numbering.
+
+The script also supports sections with letter-based numbering. During execution, you can enter:
+
+- The PDF page where the section starts.
+- The letter to use.
+- The starting number for that section.
+
+Example:
+
+```text
+PDF page 18  → A210
+PDF page 132 → C150
+PDF page 258 → B272
+PDF page 352 → D150
+```
+
+These labels are stored using the PDF Page Labels feature, keeping editorial page numbering separate from the PDF's physical page positions.
+
+## OCR and selectable text
+
+The optional OCR stage adds a recognized text layer to the PDF pages. This makes scanned or image-based text searchable and selectable.
+
+Install OCRmyPDF with pip:
+
+```bash
+python -m pip install ocrmypdf
+```
+
+Tesseract OCR must also be installed separately.
+
+On Windows, you can install Tesseract using WinGet:
+
+```cmd
+winget install -e --id tesseract-ocr.tesseract
+```
+
+After installation, check that both commands are available:
+
+```cmd
+ocrmypdf --version
+tesseract --version
+tesseract --list-langs
+```
+
+The Italian language data must be installed if you want to recognize Italian text. Tesseract should list `ita` among the available languages.
+
+Example: convert a book, exclude the first 17 pages from the content numbering, and run OCR in Italian:
+
+```bash
+python3 crea_pdf.py -o libro.pdf --copertine 17 --ocr --lingua-ocr ita
+```
+
+For combined Italian and English recognition:
+
+```bash
+python3 crea_pdf.py -o libro.pdf --ocr --lingua-ocr eng+ita
+```
+
+**Windows note:** installing OCRmyPDF with pip does not necessarily make the `ocrmypdf` command available in the Windows PATH. The Python installation's `Scripts` directory must be included in PATH. The Tesseract installation directory must also be included in PATH.
+
+If OCRmyPDF or Tesseract cannot be found, the OCR stage cannot be completed. The PDF created before OCR is retained.
+
+## Available options
+
+| Option | Description |
+|---|---|
+| `--version` | Displays the script version, build ID, and SHA256 fingerprint |
+| `-o`, `--output` | Sets the output PDF filename |
+| `-j`, `--jobs` | Sets the number of parallel conversion workers |
+| `--browser` | Specifies the browser command or executable path |
+| `--da` | First page to convert |
+| `--a` | Last page to convert |
+| `--copertine` | Number of initial cover pages to exclude from content numbering |
+| `--ocr` | Enables OCR |
+| `--lingua-ocr` | Sets the OCR language or language combination |
+| `--tieni-temp` | Keeps temporary files and the conversion cache |
+
+To display all available options:
+
+```bash
+python3 crea_pdf.py --help
+```
+
+To check the installed script version:
+
+```bash
+python3 crea_pdf.py --version
+```
+
+## Troubleshooting
+
+### Chrome or Chromium not found
+
+On Windows, the script automatically checks standard installation locations for Chrome, Chromium, and Microsoft Edge.
+
+If necessary, specify the browser executable manually:
+
+```cmd
+python crea_pdf.py --browser "C:\Program Files\Google\Chrome\Application\chrome.exe"
+```
+
+### OCRmyPDF not found
+
+Check whether Windows can locate the command:
+
+```cmd
+where ocrmypdf
+```
+
+If it cannot, check the `Scripts` directory of your Python installation and add it to PATH.
+
+### Tesseract not found
+
+Check:
+
+```cmd
+where tesseract
+```
+
+If necessary, add the installation directory to PATH. The default location is usually:
+
+```text
+C:\Program Files\Tesseract-OCR
+```
+
+### Keeping temporary files
+
+To preserve intermediate files for troubleshooting, run:
+
+```bash
+python3 crea_pdf.py -o libro.pdf --tieni-temp
+```
+
+The `_pdf_tmp` directory contains the individual page PDFs and cache data.
+
+## Notes and disclaimer
+
+This project is intended for personal study and technical research purposes only.
+
+Users are responsible for complying with the platform's terms of use, copyright rules, and all laws applicable in their country.
+
+Usernames, passwords, and session cookies are confidential information. Do not share them, publish them, or commit them to this repository.
+
+This project is not affiliated with, endorsed by, or supported by Sanoma.
+
+## Credits and license
+
+The original downloader was developed by [Tecnologica-Mente](https://github.com/Tecnologica-Mente/Sanoma_My_Place_eBook_Ripper).
+
+This repository retains the original project's basic structure and includes downloader modifications and the Python PDF converter.
+
+The original project is distributed under the MIT License. See the `LICENSE` file for the terms and conditions. Keep the copyright notice and required attributions when redistributing the software.
+
+---
