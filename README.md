@@ -1,6 +1,6 @@
 # Sanoma My Place eBook Ripper – PDF Edition
 
-Questa repository deriva dal progetto originale [Sanoma_My_Place_eBook_Ripper](https://github.com/Tecnologica-Mente/Sanoma_My_Place_eBook_Ripper), sviluppato da Tecnologica-Mente, premetto che è stato creato con AI.
+Questa repository deriva dal progetto originale [Sanoma_My_Place_eBook_Ripper](https://github.com/Tecnologica-Mente/Sanoma_My_Place_eBook_Ripper), sviluppato da Tecnologica-Mente, premetto che è stata creata con AI.
 
 La variante documentata in questa repository mantiene il sistema originale di download delle pagine HTML e introduce modifiche al downloader, uno script Python per la conversione in PDF e funzionalità aggiuntive per la gestione delle pagine, della numerazione e del riconoscimento del testo.
 
