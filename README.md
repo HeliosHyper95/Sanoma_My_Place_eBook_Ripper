@@ -88,7 +88,7 @@ Su Linux è disponibile `avvia.sh`, che avvia il server PHP integrato e verifica
 ### Per la conversione PDF
 
 - Python 3.
-- Google Chrome oppure Chromium.
+- Qualsiasi Browser Chromium Based.
 - OCRmyPDF e Tesseract OCR, soltanto se si desidera utilizzare la funzione OCR.
 
 L'OCR è facoltativo: senza `--ocr` è possibile generare il PDF senza installare questi due componenti.
@@ -407,7 +407,7 @@ On Linux, the included `avvia.sh` script starts PHP's built-in web server and ch
 ### For PDF conversion
 
 - Python 3.
-- Google Chrome or Chromium.
+- A random Chromium based browser.
 - OCRmyPDF and Tesseract OCR, only if you want to use the OCR feature.
 
 OCR is optional. You can create PDFs without installing OCRmyPDF or Tesseract by running the converter without the `--ocr` option.
